@@ -644,7 +644,7 @@ bool list_set_fields(void *obj)
   return TRUE;
 }
 
-int list_stamp(struct list *l)
+intptr_t list_stamp(struct list *l)
 {
   return l->st;
 }

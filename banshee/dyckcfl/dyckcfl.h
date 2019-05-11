@@ -121,7 +121,7 @@ void make_dyck_close_edge(dyck_node n1, dyck_node n2, int index);
 // Make (_{i} between each of n1s and n2, with the given
 // indices. length indicates how many.
 void make_clustered_dyck_open_edges(dyck_node n1s[], dyck_node n2, 
-				    int indices[], int length);
+				    intptr_t indices[], int length);
 
 // Make a )_{index} edge between n1 and n2, where the corresponding open
 // edge was created by make_grouped_dyck_open_edges. Open and close edges

@@ -28,6 +28,7 @@
  *
  */
 
+#include <inttypes.h>
 #include <assert.h>		// assert
 #include <string.h>		// strcmp
 #include "mr_dyckcfl.h"
@@ -55,8 +56,8 @@ DEFINE_NONPTR_LIST(mr_dyck_node_list,mr_dyck_node);
 #define MINIMIZE_CONSTRAINTS
 
 #ifdef MINIMIZE_CONSTRAINTS
-DECLARE_LIST(relevant_constraint_list,int);
-DEFINE_NONPTR_LIST(relevant_constraint_list,int);
+DECLARE_LIST(relevant_constraint_list,intptr_t);
+DEFINE_NONPTR_LIST(relevant_constraint_list,intptr_t);
 static relevant_constraint_list relevant_constraints;
 #endif
 
@@ -126,7 +127,7 @@ static bool relevant_constraint(int num)
     return TRUE;
   {
     relevant_constraint_list_scanner scan;
-    int next;
+    intptr_t next;
 
     relevant_constraint_list_scan(relevant_constraints,&scan);
 
@@ -156,7 +157,7 @@ static void mr_call_setif_inclusion(gen_e e1, gen_e e2)
   check_erroneous_edges();
 }
 
-static constructor get_constructor(int index, mr_edge_kind kind)
+static constructor get_constructor(intptr_t index, mr_edge_kind kind)
 {
   hash_table built_constructors = NULL;
   constructor result = NULL;
@@ -172,19 +173,19 @@ static constructor get_constructor(int index, mr_edge_kind kind)
   switch (kind) {
   case mr_o: 
     built_constructors = mr_o_hash;
-    snprintf(name,512,"(_%d",index);
+    snprintf(name,512,"(_%" PRIdPTR "",index);
     break;
   case mr_c:
     built_constructors = mr_c_hash;
-    snprintf(name,512,")_%d",index);
+    snprintf(name,512,")_%" PRIdPTR "",index);
     break;
   case mr_k:
     built_constructors = mr_k_hash;
-    snprintf(name,512,"K_%d",index);
+    snprintf(name,512,"K_%" PRIdPTR "",index);
     break;
   }
   assert(built_constructors);
-  assert(name);
+  //assert(name);
 
   // Check the hash to see if the constructor has been built yet
   // If not, build the constructor

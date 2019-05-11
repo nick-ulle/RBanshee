@@ -27,6 +27,7 @@
  * SUCH DAMAGE.
  *
  */
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -133,7 +134,7 @@ int regexp_fast_disinclusion(regexp r1, regexp r2) {
 bool regexp_complete_inclusion(regexp r1, regexp r2, unsigned char pos1,
 			      unsigned char pos2, hash_table visited) {
 
-  unsigned int state = (pos1 << (8 * sizeof(unsigned char))) + pos2;
+  intptr_t state = (pos1 << (8 * sizeof(unsigned char))) + pos2;
 
   /* case 0: empty/empty */
   if (!r1->expr[pos1] && !r2->expr[pos2]) {

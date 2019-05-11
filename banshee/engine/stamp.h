@@ -31,6 +31,7 @@
 #ifndef STAMP_H
 #define STAMP_H
 
+#include <stdint.h>
 #include <stdio.h>
 #include "regions.h"
 #include "linkage.h"
@@ -38,7 +39,7 @@
 
 EXTERN_C_BEGIN
 
-typedef int stamp;
+typedef intptr_t stamp;
 
 DECLARE_LIST(stamp_list,stamp);
 

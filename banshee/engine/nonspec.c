@@ -1704,7 +1704,7 @@ char *expr_constant_name(gen_e e)
   return setif_get_constant_name(e);
 }
 
-int expr_stamp(gen_e e)
+intptr_t expr_stamp(gen_e e)
 {
   get_stamp_fn_ptr get_stamp = get_sort_stamp(e->sort);
   return get_stamp(e);
@@ -1742,7 +1742,7 @@ cons_group make_cons_group(const char *name, sig_elt s[], int arity)
   return g;
 }
 
-constructor cons_group_get_constructor(cons_group g, int index) {
+constructor cons_group_get_constructor(cons_group g, intptr_t index) {
 	gconstructor result = NULL;
 	assert(g);
 	if (!hash_table_lookup(g->built_constructors,(hash_key)index,(hash_data *)&result)) {

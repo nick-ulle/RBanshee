@@ -342,7 +342,7 @@ void make_dyck_contra_close_edge(dyck_node n1, dyck_node n2, int index)
 
 // FIX: Clusters must be the same size. 
 void make_clustered_dyck_open_edges(dyck_node n1s[], dyck_node n2,
-				    int indices[], int length)
+				    intptr_t indices[], int length)
 {
   // This is a degenerate cluster: mark it as such and go on
   if (length == 1) {
@@ -411,12 +411,12 @@ void make_clustered_dyck_open_edges(dyck_node n1s[], dyck_node n2,
   }
 }
 
-static bool is_unclustered_index(int index)
+static bool is_unclustered_index(intptr_t index)
 {
   return hash_table_lookup(unclustered_indices,(void *)index,NULL);
 }
 
-static cluster_cons get_cluster_constructor(int index)
+static cluster_cons get_cluster_constructor(intptr_t index)
 {
   cluster_cons result = NULL;
 
