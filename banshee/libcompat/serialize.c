@@ -95,7 +95,7 @@ void serialize_pages(struct page_list *pgs, int data, int state, int first_page,
   struct page_state ps;
   int numbytes;
 #ifndef NMEMDEBUG
-  unsigned int used = 0, total = 0;
+  intptr_t used = 0, total = 0;
 #endif
   for (; pgs != NULL; pgs = pgs->next) {
     ps.old_address = pgs->pg;
@@ -107,13 +107,13 @@ void serialize_pages(struct page_list *pgs, int data, int state, int first_page,
     ps.size = size  * ((pkind == BIG) ? pgs->pg->pagecount : 1);
 
 #ifndef NMEMDEBUG
-   used += ((unsigned int) pgs->pg->available) - ((unsigned int) pgs->pg);
+   used += ((intptr_t) pgs->pg->available) - ((intptr_t) pgs->pg);
    total += ps.size;
    fprintf(stderr,
 	   "\t\tWriting page: address %x\tsize %d\tuses %d bytes.\n",
-	   (unsigned int) ps.old_address,
+	   (intptr_t) ps.old_address,
 	   ps.size,
-	   ((unsigned int) pgs->pg->available) - ((unsigned int) pgs->pg));
+	   ((intptr_t) pgs->pg->available) - ((intptr_t) pgs->pg));
 #endif
     numbytes = write(data, pgs->pg, ps.size);
     if (numbytes != ps.size) {
@@ -179,10 +179,10 @@ requires that pages be aligned at addresses where the last RPAGELOG bits are 0's
 */
 inline void *translate_pointer(translation map, void *old_address) {
 #ifndef NMEMDEBUG 
-  if (old_address && (*(map->map + (((unsigned int) old_address) >> RPAGELOG)) == 0)) 
-    fprintf(stderr,"Warning: The pointer %x has no translation.\n", (unsigned int) old_address);
+  if (old_address && (*(map->map + (((intptr_t) old_address) >> RPAGELOG)) == 0)) 
+    fprintf(stderr,"Warning: The pointer %x has no translation.\n", (intptr_t) old_address);
 #endif
-  return (*(map->map + (((unsigned int) old_address) >> RPAGELOG))) + (((unsigned int) old_address) & (((unsigned int) 0xFFFFFFFF) >> (32 - RPAGELOG)));
+  return (*(map->map + (((intptr_t) old_address) >> RPAGELOG))) + (((intptr_t) old_address) & (((intptr_t) 0xFFFFFFFF) >> (32 - RPAGELOG)));
 }
 
 void update_pointer(translation map, void **location) {
@@ -254,17 +254,17 @@ void allocate_regions(int state, translation map) {
 
     set_region(newpage,num_pages,r);	  
     /* Now we record the address of the new page(s) as the translation of the address of the old page(s). */
-    if (((((unsigned int) ps.old_address) >> RPAGELOG) << RPAGELOG) != (unsigned int) ps.old_address) {
+    if (((((intptr_t) ps.old_address) >> RPAGELOG) << RPAGELOG) != (intptr_t) ps.old_address) {
       fprintf(stderr,"Pages are not aligned properly!\n");
       exit(1);
     }
     /*
-    *(map->map + (((unsigned int) ps.old_address) >> RPAGELOG)) = 
+    *(map->map + (((intptr_t) ps.old_address) >> RPAGELOG)) = 
       (void *) newpage;
     */
     for(; num_pages > 0; ) {
       num_pages--;
-      *(map->map + ((((unsigned int) ps.old_address) + (num_pages * RPAGESIZE)) >> RPAGELOG)) = 
+      *(map->map + ((((intptr_t) ps.old_address) + (num_pages * RPAGESIZE)) >> RPAGELOG)) = 
 	(void *) (((char *) newpage) + (num_pages * RPAGESIZE));
      }
 
@@ -337,7 +337,7 @@ void deserialize_pages(int data, int state, translation map, Updater *update) {
   numbytes = read(state, &ps, sizeof(struct page_state));
   while (numbytes != 0) {
     if (numbytes != sizeof(struct page_state)) {
-      fprintf(stderr,"Error: Could not read page state. Bytes read = %d; bytes desired = %lu.\n",numbytes,(long unsigned int)sizeof(struct page_state));
+      fprintf(stderr,"Error: Could not read page state. Bytes read = %d; bytes desired = %lu.\n",numbytes,(intptr_t)sizeof(struct page_state));
       exit(1);
     }
     newp = (struct page *) translate_pointer(map, ps.old_address); 
@@ -354,10 +354,10 @@ void deserialize_pages(int data, int state, translation map, Updater *update) {
 #ifndef NMEMDEBUG
     fprintf(stderr,
 	    "\t\tDeserializing page: \told address %x\tnew address %x\tsize %d\tused %d\n",
-	    (unsigned int) ps.old_address,
-	    (unsigned int) newp,
+	    (intptr_t) ps.old_address,
+	    (intptr_t) newp,
 	    ps.size,
-	    ((unsigned int) newp->available) - ((unsigned int) ps.old_address));
+	    ((intptr_t) newp->available) - ((intptr_t) ps.old_address));
 #endif
 
     /* 
